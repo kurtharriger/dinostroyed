@@ -1,28 +1,48 @@
 class Menu extends Phaser.State {
 
   create() {
-
+    this.stage.backgroundColor = '000';
+    this.ground = this.buildGround();
     this.background = this.add.image(0, 0, 'Background');
-
-
+    
     this.dino = this.buildDinosaur();
     this.astroids = this.buildAstroids();
     // this.astroid = this.add.sprite(80+64, 50, 'Astroid');
     // this.astroid.anchor.set(0.5);
 
 
-    this.text = this.add.image(this.game.width * 0.5, this.game.height * 0.5, 'Text');
+    this.text = this.add.image(this.game.width * 0.5, this.game.height * 0.35, 'Text');
     this.text.anchor.set(0.5);
 
     this.input.onDown.add(this.onInputDown, this);
   }
 
   update() {
+    const {dino} = this;
 
+    dino.scale.x = (dino.body.velocity.x > 0) ? 1 : -1;
   }
 
   onInputDown () {
     this.game.state.start('game');
+  }
+
+  buildGround() {
+    const height = 100;
+    const groundColor = "#8C6239"
+
+    const { game, world: {width}, physics } = this;
+    const bitmapData = game.add.bitmapData(width, height);
+    bitmapData.ctx.beginPath();
+    bitmapData.ctx.rect(0,0, width, height);
+    bitmapData.ctx.fillStyle = groundColor;
+    bitmapData.ctx.fill();
+
+    const ground = game.add.group();
+    const dirt = ground.create(0, 768 - 100, bitmapData);
+    dirt.enableBody = true;
+    physics.enable(dirt);
+    dirt.body.immovable = true;
   }
 
   buildDinosaur() {
@@ -37,8 +57,11 @@ class Menu extends Phaser.State {
     dino.scale.x = dino.mydirection;
 
     physics.arcade.enable(dino);
+
     dino.enableBody = true;
-    dino.body.velocity.x = 60 * dino.mydirection;
+    dino.body.velocity.x = 400;
+    dino.body.collideWorldBounds = true;
+    dino.body.bounce.set(1);
 
     return dino;
   }
