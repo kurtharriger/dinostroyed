@@ -10,25 +10,29 @@ class Preloader extends Phaser.State {
     this.asset = this.add.sprite(this.game.width * 0.5 - 110, this.game.height * 0.5 - 10, 'preloader');
     this.load.setPreloadSprite(this.asset);
 
-    // this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
-    // this.loadResources();
-    this.ready = true;
+    this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
+    this.loadResources();
   }
 
   loadResources() {
-    // load your resources here
+    this.load.image('Background', 'assets/Background.png');
+    this.load.spritesheet('Dinosaur', 'assets/Dinosaur.png', 128, 68);
+    this.load.image('Text', 'assets/Text.png');
+    this.load.image('Astroid', 'assets/Astroid.png');
   }
 
-  create() {}
+  create() {
+    this.game.state.start('menu');
+  }
 
   update() {
     // if (this.ready) {
-      this.game.state.start('menu');
+    //   this.game.state.start('menu');
     // }
   }
 
   onLoadComplete() {
-    // this.ready = true;
+    this.ready = true;
   }
 }
 

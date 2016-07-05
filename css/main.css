@@ -4,6 +4,12 @@ body {
   margin: 0;
   overflow: hidden;
 }
+.game {
+  width: 1024px;
+  height: 768px;
+  margin: 50px auto;
+
+}
 canvas {
   display: block;
 }
