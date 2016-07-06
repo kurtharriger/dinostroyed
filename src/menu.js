@@ -17,9 +17,6 @@ class Menu extends Phaser.State {
     this.input.onDown.add(this.onInputDown, this);
   }
 
-  onInputDown () {
-    this.game.state.start('game');
-  }
 
   buildGround() {
     const height = 100;
@@ -66,7 +63,7 @@ class Menu extends Phaser.State {
   buildAstroids () {
 
     const {
-      totalRocks = 20,
+      totalRocks = 15,
       world: {width},
       rnd,
       physics,
@@ -76,29 +73,41 @@ class Menu extends Phaser.State {
 
     const rockGroup = this.add.group();
     for(let i = 0; i < totalRocks; ++i) {
-      const {xpos, ypos, scale, speed} = this.randomRockParameters();
+      const {xpos, ypos, scale, speed, character} = this.randomRockParameters();
 
       const rock = rockGroup.create(xpos, ypos, 'Astroid');
+      rock.anchor.set(0.5, 0.6);
       rock.enableBody = true;
       physics.arcade.enable(rock);
+
       rock.scale.x = scale;
       rock.scale.y = scale;
       rock.body.velocity.y = speed;
+      rock.character = character;
+
+      rock.text = this.add.text(rock.centerX, rock.centerY, rock.character, {
+        font: "28px Arial",
+        fill: "#FFF",
+        align: "center"
+      });
+      rock.text.anchor.set(0.5);
+
+
 
       rock.smash = this.buildSmash(scale);
     }
-
-
     return rockGroup;
   }
 
   randomRockParameters () {
+
     const { rnd, world: {width}} = this;
     return {
       xpos: rnd.integerInRange(0, width),
       ypos: rnd.integerInRange(-1500, 0),
-      scale: rnd.realInRange(0.5, 1),
-      speed: rnd.integerInRange(100, 300)
+      scale: rnd.realInRange(0.7, 1),
+      speed: rnd.integerInRange(100, 300),
+      character: String.fromCharCode('A'.charCodeAt() + rnd.integerInRange(0, 25))
     }
   }
 
@@ -111,23 +120,10 @@ class Menu extends Phaser.State {
     smash.makeParticles('Astroid');
     return smash;
   }
-  update() {
-    const {dino, astroids, ground, physics} = this;
 
-    dino.scale.x = (dino.body.velocity.x > 0) ? 1 : -1;
-
-    this.physics.arcade.overlap(astroids, dino, () => {
-      this.squashDino(dino);
-    });
-
-    this.physics.arcade.overlap(astroids, ground, (rock) => {
-      this.rockSmash(rock);
-    });
-  }
 
   squashDino(dino) {
     if(dino.squashed) return;
-    console.log('squashing');
     dino.squashed = true;
 
     const originalY =  dino.y;
@@ -156,13 +152,39 @@ class Menu extends Phaser.State {
     rock.smash.emitX = rock.x;
     rock.smash.emitY = rock.bottom;
     rock.smash.start(true, 1000, null, 20);
-    
+
     const {xpos, ypos, scale, speed} = this.randomRockParameters();
     rock.reset(xpos,ypos);
     rock.scale.x = scale;
     rock.scale.y = scale;
     rock.body.velocity.y = speed;
+    rock.character = rock.character;
+    rock.text.update(rock.character);
 
+  }
+
+
+  update() {
+    const {dino, astroids, ground, physics} = this;
+
+    dino.scale.x = (dino.body.velocity.x > 0) ? 1 : -1;
+
+    this.physics.arcade.overlap(astroids, dino, () => {
+      this.squashDino(dino);
+    });
+
+    this.physics.arcade.overlap(astroids, ground, (rock) => {
+      this.rockSmash(rock);
+    });
+
+    this.astroids.children.forEach(rock => {
+      rock.text.x = rock.x;
+      rock.text.y = rock.y;
+    });
+  }
+
+  onInputDown () {
+  //   this.game.state.start('game');
   }
 
 }
