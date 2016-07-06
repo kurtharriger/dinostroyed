@@ -7,7 +7,7 @@ body {
 .game {
   max-width: 1024px;
   max-height: 768px;
-  margin: 1% auto;
+  margin: 0 auto;
 
 }
 canvas {
