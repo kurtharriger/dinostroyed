@@ -5,9 +5,9 @@ body {
   overflow: hidden;
 }
 .game {
-  width: 1024px;
-  height: 768px;
-  margin: 50px auto;
+  max-width: 1024px;
+  max-height: 768px;
+  margin: 1% auto;
 
 }
 canvas {
