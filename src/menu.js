@@ -15,6 +15,21 @@ class Menu extends Phaser.State {
     this.text.anchor.set(0.5);
 
     this.input.onDown.add(this.onInputDown, this);
+    //  Capture all key presses
+    this.game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
+
+
+    // crappy hack to get keyboard to work on ios
+    if(this.game.device.iOS) {
+      var inputField = global.document.createElement("input");
+      inputField.type = "text";
+      inputField.style.cssText = "position:absolute; left:0; top: 0; width:100%; height:100%; opacity:0; cursor: none";
+
+      global.document.getElementById('dinostroyed-game').appendChild(inputField);
+      inputField.addEventListener('focus', () => {
+         inputField.style.cssText = "position:absolute; left:0; top: 0; width:100%; height:1px; opacity:0; cursor: none";
+      });
+    }
   }
 
 
@@ -91,9 +106,6 @@ class Menu extends Phaser.State {
         align: "center"
       });
       rock.text.anchor.set(0.5);
-
-
-
       rock.smash = this.buildSmash(scale);
     }
     return rockGroup;
@@ -183,8 +195,19 @@ class Menu extends Phaser.State {
     });
   }
 
+  keyPress(char) {
+
+    this.astroids.children.forEach(rock => {
+      if(rock.character === char.toUpperCase()) {
+        this.rockSmash(rock);
+      }
+    });
+
+  }
+
   onInputDown () {
   //   this.game.state.start('game');
+
   }
 
 }
