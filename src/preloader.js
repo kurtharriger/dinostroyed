@@ -23,7 +23,7 @@ class Preloader extends Phaser.State {
 
   create() {
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
-    this.game.state.start('menu');
+    this.game.state.start('game');
   }
 
   update() {
