@@ -1,6 +1,8 @@
 
-## Dinostroyed
+## [Dinostroyed](http://dinostroyed.agilehacker.com)
 
-Can you save the dinosaurs from a out of this world astroid onslaught?
+![](https://travis-ci.org/kurtharriger/dinostroyed.svg?branch=master)
 
-Tap the astroids to destroy them as they fall.
+Can you save the dinosaurs from an apocalyptic onslaught of astroids? 
+
+Play [Dinostroyed](http://dinostroyed.agilehacker.com)
