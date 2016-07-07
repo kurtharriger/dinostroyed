@@ -48,7 +48,7 @@ export function buildDinosaurs(game, count = 5) {
 function buildDinosaur(game, group) {
   const dinoY = 650;
   const {physics, world: {width}} = game;
-  const dinoVelocity = game.rnd.integerInRange(300, 500);
+  const dinoVelocity = game.rnd.integerInRange(200, 500);
   const dino = group.create(0, dinoY, 'Dinosaur');
   dino.anchor.set(0.5);
   dino.animations.add('Run', [0,1], 4, true);
@@ -88,7 +88,7 @@ export function buildAstroids(game, totalRocks) {
 
     rock.scale.x = scale;
     rock.scale.y = scale;
-    rock.body.velocity.y = speed;
+    rock.initialVelocity = speed;
     rock.character = character;
 
     rock.text = game.add.text(rock.centerX, rock.centerY, rock.character, {
@@ -101,14 +101,19 @@ export function buildAstroids(game, totalRocks) {
   }
   return rockGroup;
 }
+export function updateAstroidVelocities(astroids, percentage) {
+  astroids.children.forEach(rock => {
+    rock.body.velocity.y = rock.initialVelocity * percentage;
+  });
+}
 
 function randomRockParameters(game) {
   const { rnd, world: {width}} = game;
   return {
     xpos: rnd.integerInRange(0, width),
-    ypos: rnd.integerInRange(-500, 0),
+    ypos: rnd.integerInRange(-300, 0),
     scale: rnd.realInRange(0.7, 1),
-    speed: rnd.integerInRange(100, 300),
+    speed: rnd.integerInRange(30, 50),
     character: String.fromCharCode('A'.charCodeAt() + rnd.integerInRange(0, 25))
   }
 }
@@ -135,7 +140,7 @@ export function respawnRock(rock) {
   rock.reset(xpos,ypos);
   rock.scale.x = scale;
   rock.scale.y = scale;
-  rock.body.velocity.y = speed;
+  rock.initialVelocity = speed;
   rock.character = character;
   rock.text.setText(rock.character);
 }

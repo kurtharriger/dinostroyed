@@ -6,7 +6,8 @@ import {
   respawnDinosaur,
   respawnRock,
   rockSmash,
-  squashDino
+  squashDino,
+  updateAstroidVelocities
 } from './shared';
 
 
@@ -44,10 +45,13 @@ class Game extends Phaser.State {
       rock.events.onInputDown.add(rockSmash);
     });
     enableiOSKeyboardHack(this.game);
+    this.reset();
   }
 
   update() {
     const {game, dinosaurs, astroids, ground, physics} = this;
+
+    this.adjustDifficulty();
 
     dinosaurs.children.forEach(dino => {
       if(dino.killedTime && !this.playing) {
@@ -101,6 +105,7 @@ class Game extends Phaser.State {
 
     dinosaurs.children.forEach(respawnDinosaur);
     astroids.children.forEach(respawnRock);
+
     if(playing) {
       text.kill();
     } else {
@@ -109,13 +114,26 @@ class Game extends Phaser.State {
   }
 
   startGame() {
+    const { game: { time } } = this;
     this.playing = true;
+    this.startTime = time.totalElapsedSeconds();
     this.reset();
   }
 
   endGame() {
+    const {game: {time}, startTime} = this;
+    this.lastDuration = time.totalElapsedSeconds() - startTime;
     this.playing = false;
     this.reset();
+  }
+
+  adjustDifficulty() {
+    const {playing, astroids, game: {time}, startTime} = this;
+
+    // increase the velocity of the astroids based on the duration of play
+    // demo screen speed should be faster than inital game play
+    const percentageIncrease = !playing ? 3.0 : Math.pow(1.05, time.totalElapsedSeconds() - startTime);
+    updateAstroidVelocities(astroids, percentageIncrease)
   }
 }
 
