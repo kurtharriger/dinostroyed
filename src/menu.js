@@ -38,6 +38,11 @@ class Menu extends Phaser.State {
     //  Capture all key presses
     this.game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
 
+
+    this.astroids.children.forEach(rock => {
+      rock.inputEnabled = true;
+      rock.events.onInputDown.add(rockSmash);
+    });
     enableiOSKeyboardHack(this.game);
   }
 
@@ -76,7 +81,7 @@ class Menu extends Phaser.State {
   }
 
   keyPress(char) {
-    if(char === ' ') {
+    if(!this.palying && char === ' ') {
       this.startGame();
     }
     this.astroids.children.forEach(rock => {
@@ -87,23 +92,31 @@ class Menu extends Phaser.State {
   }
 
   onInputDown () {
-    this.startGame();
+    const { playing } = this;
+    if(!this.playing) this.startGame();
+  }
+
+  reset() {
+    const { dinosaurs, astroids, text, playing } = this;
+
+    dinosaurs.children.forEach(respawnDinosaur);
+    astroids.children.forEach(respawnRock);
+    if(playing) {
+      text.kill();
+    } else {
+      text.revive();
+    }
   }
 
   startGame() {
     this.playing = true;
-    this.dinosaurs.children.forEach(respawnDinosaur);
-    this.astroids.children.forEach(respawnRock);
-    this.text.kill();
+    this.reset();
   }
 
   endGame() {
     this.playing = false;
-    this.dinosaurs.children.forEach(respawnDinosaur);
-    this.astroids.children.forEach(respawnRock);
-    this.text.revive();
+    this.reset();
   }
-
 }
 
 export default Menu;
