@@ -11,7 +11,8 @@
     "build:html": "htmlprocessor index.html -o build/index.html",
     "copy:all": "npm run copy:assets && npm run copy:phaser",
     "copy:assets": "cp -rf assets build/",
-    "copy:phaser": "cp -rf node_modules/phaser/build/phaser.min.js build/phaser.min.js"
+    "copy:phaser": "cp -rf node_modules/phaser/build/phaser.min.js build/phaser.min.js",
+    "test": "echo 'There are no tests.'"
   },
   "keywords": [],
   "author": "",
