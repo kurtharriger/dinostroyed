@@ -2,6 +2,10 @@ const dinoVelocity = 400;
 const dinoY = 650;
 
 class Menu extends Phaser.State {
+  constructor() {
+    super();
+    this.totalRocks = 5;
+  }
 
   create() {
     this.stage.backgroundColor = '000';
@@ -54,6 +58,10 @@ class Menu extends Phaser.State {
     return ground;
   }
 
+  buildDnosaurs() {
+
+  }
+
   buildDinosaur() {
     const {physics, add} = this;
 
@@ -78,7 +86,7 @@ class Menu extends Phaser.State {
   buildAstroids () {
 
     const {
-      totalRocks = 15,
+      totalRocks,
       world: {width},
       rnd,
       physics,
@@ -116,7 +124,7 @@ class Menu extends Phaser.State {
     const { rnd, world: {width}} = this;
     return {
       xpos: rnd.integerInRange(0, width),
-      ypos: rnd.integerInRange(-1500, 0),
+      ypos: rnd.integerInRange(-500, 0),
       scale: rnd.realInRange(0.7, 1),
       speed: rnd.integerInRange(100, 300),
       character: String.fromCharCode('A'.charCodeAt() + rnd.integerInRange(0, 25))
@@ -165,12 +173,12 @@ class Menu extends Phaser.State {
     rock.smash.emitY = rock.bottom;
     rock.smash.start(true, 1000, null, 20);
 
-    const {xpos, ypos, scale, speed} = this.randomRockParameters();
+    const {xpos, ypos, scale, speed, character} = this.randomRockParameters();
     rock.reset(xpos,ypos);
     rock.scale.x = scale;
     rock.scale.y = scale;
     rock.body.velocity.y = speed;
-    rock.character = rock.character;
+    rock.character = character;
     rock.text.update(rock.character);
 
   }
