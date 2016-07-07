@@ -9,6 +9,3 @@ game.state.add('preloader', new Preloader());
 game.state.add('menu', new Menu());
 game.state.add('game', new Game());
 game.state.start('boot');
-
-
-document.body.addEventListener('touchmove', function(e){ e.preventDefault(); });
