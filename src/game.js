@@ -35,6 +35,16 @@ class Game extends Phaser.State {
     this.astroids = buildAstroids(game, numberOfAstroids);
     this.text = buildWelcomeText(game);
 
+    this.lastDurationText = game.add.text(
+      game.world.centerX,
+      game.world.centerY * 1.2, '', {
+      font: "28px Arial",
+      fill: "#FFF",
+      align: "center"
+    });
+    this.lastDurationText.anchor.set(0.5);
+    this.lastDurationText.kill();
+
     this.input.onDown.add(this.onInputDown, this);
     //  Capture all key presses
     this.game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
@@ -101,16 +111,22 @@ class Game extends Phaser.State {
   }
 
   reset() {
-    const { dinosaurs, astroids, text, playing } = this;
+    const { dinosaurs, astroids, text, playing, lastDurationText } = this;
 
     dinosaurs.children.forEach(respawnDinosaur);
     astroids.children.forEach(respawnRock);
 
     if(playing) {
       text.kill();
+      lastDurationText.kill();
     } else {
       text.revive();
+      if(this.lastDuration) {
+        lastDurationText.setText('You survived ' + this.lastDuration.toFixed(2) + ' seconds!');
+        lastDurationText.revive();
+      }
     }
+
   }
 
   startGame() {
@@ -124,6 +140,7 @@ class Game extends Phaser.State {
     const {game: {time}, startTime} = this;
     this.lastDuration = time.totalElapsedSeconds() - startTime;
     this.playing = false;
+
     this.reset();
   }
 
@@ -133,7 +150,7 @@ class Game extends Phaser.State {
     // increase the velocity of the astroids based on the duration of play
     // demo screen speed should be faster than inital game play
     const percentageIncrease = !playing ? 3.0 : Math.pow(1.05, time.totalElapsedSeconds() - startTime);
-    updateAstroidVelocities(astroids, percentageIncrease)
+    updateAstroidVelocities(astroids, percentageIncrease);
   }
 }
 

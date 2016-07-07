@@ -111,9 +111,9 @@ function randomRockParameters(game) {
   const { rnd, world: {width}} = game;
   return {
     xpos: rnd.integerInRange(0, width),
-    ypos: rnd.integerInRange(-300, 0),
+    ypos: rnd.integerInRange(-100, 0),
     scale: rnd.realInRange(0.7, 1),
-    speed: rnd.integerInRange(30, 50),
+    speed: rnd.integerInRange(10, 15),
     character: String.fromCharCode('A'.charCodeAt() + rnd.integerInRange(0, 25))
   }
 }
