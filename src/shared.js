@@ -47,17 +47,14 @@ export function buildDinosaurs(game, count = 5) {
 
 function buildDinosaur(game, group) {
   const dinoY = 650;
-  const dinoWidth = 128;
-
   const {physics, world: {width}} = game;
-  const xpos = game.rnd.integerInRange(dinoWidth / 2, width - dinoWidth / 2);
   const dinoVelocity = game.rnd.integerInRange(300, 500);
-
-  const dino = group.create(xpos, dinoY, 'Dinosaur');
+  const dino = group.create(0, dinoY, 'Dinosaur');
   dino.anchor.set(0.5);
   dino.animations.add('Run', [0,1], 4, true);
   dino.animations.play('Run');
 
+  dino.x = game.rnd.integerInRange(dino.width / 2, width - dino.width / 2);
   dino.mydirection = 1;
   dino.scale.x = dino.mydirection;
 
@@ -131,6 +128,9 @@ export function rockSmash(rock) {
   rock.smash.emitY = rock.bottom;
   rock.smash.start(true, 1000, null, 20);
 
+  respawnRock(rock);
+}
+export function respawnRock(rock) {
   const {xpos, ypos, scale, speed, character} = randomRockParameters(rock.game);
   rock.reset(xpos,ypos);
   rock.scale.x = scale;
@@ -138,24 +138,19 @@ export function rockSmash(rock) {
   rock.body.velocity.y = speed;
   rock.character = character;
   rock.text.setText(rock.character);
-
 }
 
-export function squashDino(dino, revive) {
-  if(dino.squashed) return;
-
+export function respawnDinosaur(dino) {
   const game = dino.game;
-  const dinoWidth = dino.width;
+  dino.x = game.rnd.integerInRange(dino.width / 2, game.world.width - dino.width / 2 )
+  dino.revive();
+  dino.killedTime = null;
+}
+
+export function squashDino(dino) {
+  const game = dino.game;
+  if(dino.killedTime) return;
 
   dino.kill();
-  if(revive) {
-    const timer = game.time.create(true);
-    timer.add(5000, () => {
-      dino.x = game.rnd.integerInRange(dinoWidth / 2, game.world.width - dinoWidth / 2 )
-      dino.revive();
-      dino.squashed = false;
-    });
-    timer.start();
-  }
-  dino.squashed = true;
+  dino.killedTime = game.time.totalElapsedSeconds();
 }

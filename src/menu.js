@@ -3,6 +3,8 @@ import {
   buildBackground,
   buildDinosaurs,
   enableiOSKeyboardHack,
+  respawnDinosaur,
+  respawnRock,
   rockSmash,
   squashDino
 } from './shared';
@@ -20,6 +22,8 @@ const numberOfDinosaurs = 3;
 class Menu extends Phaser.State {
   constructor() {
     super();
+
+    this.playing = false;
   }
 
   create() {
@@ -38,15 +42,21 @@ class Menu extends Phaser.State {
   }
 
   update() {
-    const {dinosaurs, astroids, ground, physics} = this;
+    const {game, dinosaurs, astroids, ground, physics} = this;
 
     dinosaurs.children.forEach(dino => {
-      dino.scale.x = (dino.body.velocity.x > 0) ? 1 : -1;
+      if(dino.killedTime && !this.playing) {
+         if(game.time.totalElapsedSeconds() > dino.killedTime + 5) {
+           respawnDinosaur(dino);
+         }
+      } else {
+        dino.scale.x = (dino.body.velocity.x > 0) ? 1 : -1;
+      }
     });
 
     physics.arcade.overlap(astroids, dinosaurs, (rock, dino) => {
       rockSmash(rock);
-      squashDino(dino, true);
+      squashDino(dino);
     });
 
     physics.arcade.overlap(astroids, ground, (rock) => {
@@ -57,9 +67,18 @@ class Menu extends Phaser.State {
       rock.text.x = rock.x;
       rock.text.y = rock.y;
     });
+
+    let stillAlive = false;
+    dinosaurs.children.forEach(dino => {
+        if(!dino.killedTime) stillAlive = true;
+    });
+    if(!stillAlive) this.endGame();
   }
 
   keyPress(char) {
+    if(char === ' ') {
+      this.startGame();
+    }
     this.astroids.children.forEach(rock => {
       if(rock.character === char.toUpperCase()) {
         rockSmash(rock);
@@ -68,7 +87,21 @@ class Menu extends Phaser.State {
   }
 
   onInputDown () {
-     this.game.state.start('game');
+    this.startGame();
+  }
+
+  startGame() {
+    this.playing = true;
+    this.dinosaurs.children.forEach(respawnDinosaur);
+    this.astroids.children.forEach(respawnRock);
+    this.text.kill();
+  }
+
+  endGame() {
+    this.playing = false;
+    this.dinosaurs.children.forEach(respawnDinosaur);
+    this.astroids.children.forEach(respawnRock);
+    this.text.revive();
   }
 
 }
