@@ -1,6 +1,12 @@
 language: node_js
 node_js:
   - "6.1"
+
 script:
   - npm run build
-addons
+
+addons:
+  artifacts:
+    paths:
+      - build
+    debug: true
