@@ -45,6 +45,8 @@ class Game extends Phaser.State {
     this.lastDurationText.anchor.set(0.5);
     this.lastDurationText.kill();
 
+
+
     this.input.onDown.add(this.onInputDown, this);
     //  Capture all key presses
     this.game.input.keyboard.addCallbacks(this, null, null, this.keyPress);
@@ -60,6 +62,13 @@ class Game extends Phaser.State {
 
     });
     enableiOSKeyboardHack(this.game);
+
+    const github = this.add.image(960, 700, 'Github');
+    github.inputEnabled = true;
+    github.events.onInputDown.add(() => {
+      window.open('https://github.com/kurtharriger/dinostroyed');
+    });
+
     this.reset();
   }
 

@@ -19,6 +19,7 @@ class Preloader extends Phaser.State {
     this.load.spritesheet('Dinosaur', 'assets/Dinosaur.png', 128, 68);
     this.load.image('Text', 'assets/Text.png');
     this.load.image('Astroid', 'assets/Astroid.png');
+    this.load.image('Github', 'assets/blacktocat-32.png');
   }
 
   create() {
